@@ -394,6 +394,9 @@ msb restart -t 30 devbox
 Wait for an existing sandbox to reach `Stopped` or `Crashed`. Also available as
 `msb sandbox wait` and `msb sbx wait`.
 
+Use `msb run --name worker --detach …` to keep the sandbox available for a later
+`msb wait`; unnamed runs are removed when they finish.
+
 ```bash
 msb wait worker
 msb wait worker --timeout 30s
