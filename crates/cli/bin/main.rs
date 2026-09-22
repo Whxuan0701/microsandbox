@@ -744,6 +744,21 @@ mod command_tests {
     use super::*;
 
     #[test]
+    fn wait_accepts_both_timeout_spellings() {
+        for flag in ["-t", "--timeout"] {
+            let cli =
+                Cli::try_parse_from(["msb", "wait", "worker", flag, "30s", "--format", "json"])
+                    .unwrap();
+            let Commands::Wait(args) = cli.command else {
+                panic!("expected the wait command");
+            };
+            assert_eq!(args.name, "worker");
+            assert_eq!(args.timeout.as_deref(), Some("30s"));
+            assert_eq!(args.format.as_deref(), Some("json"));
+        }
+    }
+
+    #[test]
     fn maintenance_commands_do_not_require_backend_resolution() {
         let maintenance_commands = [
             Cli::try_parse_from(["msb", "doctor"]).unwrap().command,

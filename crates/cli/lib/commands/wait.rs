@@ -16,10 +16,10 @@ pub struct WaitArgs {
     pub name: String,
 
     /// Stop waiting after this duration (e.g. 30s, 5m, 1h).
-    #[arg(long)]
+    #[arg(short = 't', long)]
     pub timeout: Option<String>,
 
-    /// Output format (json).
+    /// Output format (json). Exit code and signal are currently unavailable.
     #[arg(long, value_name = "FORMAT", value_parser = ["json"])]
     pub format: Option<String>,
 }
@@ -132,10 +132,10 @@ mod tests {
         let result = SandboxStopResult {
             name: "worker".to_string(),
             status: SandboxStatus::Crashed,
-            exit_code: Some(137),
-            signal: Some(9),
+            exit_code: None,
+            signal: None,
             observed_at: "2026-08-18T09:30:00Z".parse().unwrap(),
-            source: Some("owned process".to_string()),
+            source: Some("refreshed backend state".to_string()),
         };
         let json = wait_result_json(&result);
 
@@ -145,10 +145,10 @@ mod tests {
                 "name": "worker",
                 "status": "Crashed",
                 "terminal": true,
-                "exit_code": 137,
-                "signal": 9,
+                "exit_code": null,
+                "signal": null,
                 "observed_at": "2026-08-18T09:30:00+00:00",
-                "source": "owned process",
+                "source": "refreshed backend state",
             })
         );
     }
