@@ -405,22 +405,17 @@ msb wait worker --timeout 5m --format json
 | `-t`, `--timeout` | Stop waiting after a duration such as `500ms`, `30s`, `5m`, or `1h`. Without this flag, wait indefinitely |
 | `--format json` | Emit the observed terminal state as JSON |
 
-The timeout covers both initial lookup and waiting. Expiry returns an error;
-it does not stop or kill the sandbox. A missing sandbox returns an error rather
-than waiting for it to be created. An already-stopped or crashed sandbox returns
-immediately. Use a persistent named sandbox: an ephemeral sandbox may already
-have been removed before lookup.
+The timeout covers lookup and waiting. It returns an error without stopping the
+sandbox. Missing sandboxes return an error; stopped or crashed sandboxes return
+immediately.
 
-A successful command exit means the wait completed, including when the observed
-state is `Crashed`. It does **not** mean the guest workload succeeded, so
-`msb wait worker && next-step` is not a workload-success check.
+A successful wait means the sandbox stopped or crashed, not that its workload
+succeeded.
 
-Text output is the sandbox name and state, for example `worker Stopped`.
-JSON includes `name`, `status`, `terminal`, `exit_code`, `signal`, `observed_at`,
-and `source`. **`exit_code` and `signal` are currently always `null`** for this
-command: the SDK lookup-based wait does not retrieve guest workload exit results.
-Unlike Docker's `docker wait`, this command does not print the workload's exit code.
-`observed_at` is the time the terminal state was observed, not the workload exit time.
+Text output shows the sandbox name and status. JSON includes `name`, `status`,
+`terminal`, `exit_code`, `signal`, `observed_at`, and `source`. Exit codes and
+signals are currently unavailable (`null`); `observed_at` records when the
+terminal state was observed.
 
 <span id="msb-sandbox-ping" />
 
